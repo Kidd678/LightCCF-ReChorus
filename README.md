@@ -5,111 +5,122 @@
 ## 1. 项目结构
 
 ```
-ReChorus/
-├── src/
-│   ├── models/
-│   │   ├── general/
-│   │   │   ├── LightCCF.py   # [核心] 复现的 LightCCF 模型
-│   │   │   ├── LightGCN.py   # 基线模型
-│   │   │   └── BPRMF.py      # 基线模型
-│   ├── helpers/
-│   │   ├── BaseRunner.py     # 训练和评估循环
-│   │   └── BaseReader.py     # 数据加载
-│   └── main.py               # 程序入口
-├── data/                     # 数据集
-│   ├── Grocery_and_Gourmet_Food/
-│   └── MovieLens_1M/
-├── log/                      # 实验日志和保存的结果
-# LightCCF + ReChorus — 复现实验仓库
-
-本仓库将 `LightCCF` 的实现与 `ReChorus` 实验框架放在同一项目中，便于复现实验并与基线模型（BPRMF、LightGCN）比较。仓库包含两部分：`LightCCF/`（轻量复现实现）和 `ReChorus/`（实验框架与数据）。
-
-**快速概览**：
-- 根目录包含 `LightCCF/`、`ReChorus/`、以及用于存放模型/日志的 `model/` 和 `log/`（本仓库已将 `model/` 与 `log/` 列入 `.gitignore`，通常不推送大文件）。
-
-## 1. 仓库结构（简要）
-
-```
-./
-├── LightCCF/                # LightCCF 的简洁实现（脚本、工具、数据说明）
-├── ReChorus/                # ReChorus 实验框架（src/, data/, docs/ 等）
-│   ├── src/
-│   │   ├── models/          # 各类模型实现（general/ 包含 LightCCF, LightGCN, BPRMF）
-│   │   └── main.py          # ReChorus 的程序入口（训练/评估）
-│   └── data/                # 示例数据集（请根据需要下载或准备）
-├── model/                   # （忽略）训练得到的模型权重（默认被 .gitignore 忽略）
-├── log/                     # （忽略）训练日志与结果
-├── README.md                # 本文件
-└── requirements.txt         # 依赖（位于 ReChorus/ 或根目录，视情况而定）
+├── LightCCF/                  # 论文官方原始代码（仅作参考）
+├── ReChorus/
+    ├── src/
+    │   ├── models/
+    │   │   ├── general/
+    │   │   │   ├── LightCCF.py        # [核心] 复现的 LightCCF 模型
+    │   │   │   ├── LightCCF_Imp.py    # [创新] 改进版 LightCCF 模型
+    │   │   │   ├── LightGCN.py        # 基线模型
+    │   │   │   └── BPRMF.py           # 基线模型
+    │   ├── helpers/
+    │   │   ├── BaseRunner.py     # 训练和评估循环
+    │   │   └── BaseReader.py     # 数据加载
+    │   └── main.py               # 程序入口
+    ├── data/                     # 数据集
+    │   ├── Grocery_and_Gourmet_Food/
+    │   └── MovieLens_1M/
+    ├── ndcg_comparison.png       # 结果可视化
+    ├── time_comparison.png       # 结果可视化
+    └── loss_curve.png            # 结果可视化
+├── model
+├── log                           # 实验日志和保存的结果
 ```
 
 ## 2. 环境要求
 
 - Python 3.8+
-- PyTorch（与 CUDA 版本匹配，可选 GPU）
-- pandas, numpy, scikit-learn, tqdm 等常用库
+- PyTorch
+- Pandas、NumPy、Scikit-learn
 
-安装依赖（若仓库根目录有 `requirements.txt`）：
-
-```powershell
+安装依赖：
+```bash
 pip install -r requirements.txt
 ```
 
-如果 `requirements.txt` 位于 `ReChorus/`，请改为 `pip install -r ReChorus/requirements.txt`。
+## 3. 运行方法
 
-## 3. 运行说明
+**重要提示**：Windows 用户需要添加 `--num_workers 0` 以避免多进程问题。
 
-说明：`ReChorus/src/main.py` 是实验框架的入口，用于训练与评估多种模型；`LightCCF/` 下也包含用于单独运行或演示的小脚本。
+### 3.1 运行 LightCCF（目标模型）
+```bash
+# Grocery 数据集
+python src/main.py --model_name LightCCF --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0
 
-**重要（Windows）**：在 Windows 平台上运行 `ReChorus` 时，请添加 `--num_workers 0` 以避免多进程问题。
-
-示例命令（在仓库根目录运行）：
-
-```powershell
-# 运行 ReChorus 中的 LightCCF（Grocery 数据集）
-python ReChorus/src/main.py --model_name LightCCF --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0
-
-# 运行基线：LightGCN
-python ReChorus/src/main.py --model_name LightGCN --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 1e-4 --num_workers 0
-
-# 运行根目录下的 LightCCF 示例（如果需要）
-python LightCCF/main.py --help
+# MovieLens-1M 数据集
+python src/main.py --model_name LightCCF --dataset MovieLens_1M --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0
 ```
 
-根据框架不同，命令行参数名可能略有差异，请查看 `ReChorus/src/main.py` 的参数说明或 `--help` 输出。
+### 3.2 运行基线模型
+```bash
+# BPRMF
+python src/main.py --model_name BPRMF --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 1e-4 --num_workers 0
 
-## 4. 文件与大文件管理
-
-- 本仓库默认将 `model/` 与 `log/` 列入 `.gitignore`，以避免将训练权重或大量日志推送到远程仓库。
-- 仓库中存在若干较大的数据文件（例如 MovieLens 的预处理文件），单文件若超过 100 MB 将无法直接推送到 GitHub。推荐使用 Git LFS 管理大文件：
-
-```powershell
-git lfs install
-git lfs track "*.pt"
-git lfs track "*.pth"
-git lfs track "*.pkl"
-git add .gitattributes
-git commit -m "Add git lfs tracking for large files"
+# LightGCN
+python src/main.py --model_name LightGCN --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 1e-4 --num_workers 0
 ```
 
-如果你希望从历史中移除已提交的大文件（已将它们误提交），可使用 `git filter-repo` 或 `git filter-branch` 清理历史（此操作会重写历史，需谨慎并备份）。
-
-## 5. 实验结果与可视化
-
-- 项目中包含用于绘制对比图表的脚本（例如 `plot_result.py`）。运行这些脚本会读取 `log/` 目录下的实验输出并生成图片（若 `log/` 本地存在）。
-
-示例：
-```powershell
-python plot_result.py
+### 3.3 运行改进模型 (LightCCF_Imp)
+```bash
+# 结合噪声增强与可学习温度
+python src/main.py --model_name LightCCF_Imp --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --noise_eps 0.02 --learnable_tau 1 --num_workers 0
 ```
 
-（根据脚本位置调整路径，例如 `python ReChorus/plot_result.py`）
+## 4. 实验结果
 
-## 6. 备注与联系方式
+我们在两个数据集上进行了实验：`Grocery_and_Gourmet_Food` 和 `MovieLens-1M`。
 
-- 如果你希望我帮助：配置 Git LFS、从历史中删除大文件、或把 `model/` 上传到 GitHub Releases，请告诉我你的偏好；我可以按你的授权在本地执行并推送变更。
-- 如需进一步说明各文件夹的用途或把 README 翻译为英文版，我也可以继续完善。
+### 4.1 性能对比（NDCG@20）
 
-----
+| 模型 | Grocery | MovieLens-1M |
+|-------|---------|--------------|
+| BPRMF | 0.1671  | 0.3191       |
+| LightGCN| 0.1730 | 0.3293       |
+| **LightCCF** | **0.3200** | **0.3685** |
+| **LightCCF_Imp (创新)** | **0.3286** | - |
 
-感谢使用本仓库 —— 如需把特定大文件排除或迁移到 LFS，请回复要处理的文件路径或同意我替你配置 LFS。
+**分析**：
+- **LightCCF** 在两个数据集上都明显优于 BPRMF 和 LightGCN。
+- 在 `Grocery` 数据集上，LightCCF 的性能接近基线模型的 **2 倍**，展示了其在稀疏数据集上的优势。
+- 在 `MovieLens-1M` 上，它的性能始终领先，相比 LightGCN 有约 12% 的提升。
+
+> **结论**：
+> 1. LightCCF 在稀疏数据集 (Grocery) 上实现了近 **2倍** 的性能提升。
+> 2. 我们的改进模型 **LightCCF_Imp** 通过引入噪声扰动和自适应温度，在 LightCCF 的基础上进一步提升了 **2.7%** 的性能。
+
+### 4.2 训练效率
+
+MovieLens-1M 数据集上每个 epoch 的训练时间对比：
+- **BPRMF**：~12s
+- **LightCCF**：~20s
+- **LightGCN**：~150s
+
+**分析**：
+- LightCCF 比 LightGCN **快 7.5 倍**。
+- 通过移除昂贵的图卷积操作，并依赖对比学习进行邻域聚合，LightCCF 实现了更好的性能，同时计算效率与简单矩阵分解相当。
+
+## 5. 实现细节
+
+LightCCF 的实现位于 `src/models/general/LightCCF.py` 中。主要特性包括：
+- **无 GCN 层**：纯嵌入向量架构。
+- **邻域聚合（NA）损失**：显式地优化用户与其正样本间的相似度，同时推离其他样本，隐式地实现 GCN 的平滑效果。
+- **超参数**：经实验验证，`ssl_lambda=0.1`（NA 损失权重）和 `tau=0.2`（温度参数）是最优的。
+
+
+## 6. 创新与改进 (LightCCF_Imp)
+
+为了进一步提升模型性能，我们在原论文基础上提出了两点改进，并实现了 `LightCCF_Imp` 模型：
+
+1.  **Embedding 噪声扰动 (Noise Perturbation)**:
+    *   **原理**: 在计算 NA Loss 时，对 User 和 Item 的 Embedding 施加微小的随机噪声（Noise）。
+    *   **作用**: 这种机制类似于 SimGCL 中的数据增强，能够增加模型的鲁棒性，防止模型过拟合于特定的 Embedding 点，从而学到更平滑的邻域结构。
+    *   **实现**: 引入超参数 `--noise_eps` 控制噪声强度。
+
+2.  **自适应温度系数 (Adaptive Temperature)**:
+    *   **原理**: 将对比学习中的温度参数 $\tau$ 设为可学习参数 (`nn.Parameter`)。
+    *   **作用**: 允许模型根据训练进程自动调整对负样本的区分力度（Sharpness），避免手动调参的局限性。
+    *   **实现**: 引入参数 `--learnable_tau`。
+
+**验证结果**:
+在 `Grocery` 数据集上，改进后的模型取得了 **NDCG@20 = 0.3286** 的成绩，优于原始 LightCCF 的 0.3200。
