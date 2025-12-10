@@ -85,9 +85,9 @@ python src/main.py --model_name LightCCF_Imp --dataset Grocery_and_Gourmet_Food 
 - 在 `Grocery` 数据集上，LightCCF 的性能接近基线模型的 **2 倍**，展示了其在稀疏数据集上的优势。
 - 在 `MovieLens-1M` 上，它的性能始终领先，相比 LightGCN 有约 12% 的提升。
 
-> **结论**：
-> 1. LightCCF 在稀疏数据集 (Grocery) 上实现了近 **2倍** 的性能提升。
-> 2. 我们的改进模型 **LightCCF_Imp** 通过引入噪声扰动和自适应温度，在 LightCCF 的基础上进一步提升了 **2.7%** 的性能。
+**结论**：
+1. LightCCF 在稀疏数据集 (Grocery) 上实现了近 **2倍** 的性能提升。
+2. 我们的改进模型 **LightCCF_Imp** 通过引入噪声扰动和自适应温度，在 LightCCF 的基础上进一步提升了 **2.7%** 的性能。
 
 ### 4.2 训练效率
 
