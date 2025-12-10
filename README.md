@@ -5,27 +5,30 @@
 ## 1. 项目结构
 
 ```
+.
 ├── LightCCF/                  # 论文官方原始代码（仅作参考）
-├── ReChorus/
-    ├── src/
-    │   ├── models/
-    │   │   ├── general/
-    │   │   │   ├── LightCCF.py        # [核心] 复现的 LightCCF 模型
-    │   │   │   ├── LightCCF_Imp.py    # [创新] 改进版 LightCCF 模型
-    │   │   │   ├── LightGCN.py        # 基线模型
-    │   │   │   └── BPRMF.py           # 基线模型
-    │   ├── helpers/
-    │   │   ├── BaseRunner.py     # 训练和评估循环
-    │   │   └── BaseReader.py     # 数据加载
-    │   └── main.py               # 程序入口
-    ├── data/                     # 数据集
-    │   ├── Grocery_and_Gourmet_Food/
-    │   └── MovieLens_1M/
-    ├── ndcg_comparison.png       # 结果可视化
-    ├── time_comparison.png       # 结果可视化
-    └── loss_curve.png            # 结果可视化
-├── model
-├── log                           # 实验日志和保存的结果
+├── ReChorus/                  # ReChorus 实验框架
+│   ├── src/
+│   │   ├── models/
+│   │   │   ├── general/
+│   │   │   │   ├── LightCCF.py        # [核心] 复现的 LightCCF 模型
+│   │   │   │   ├── LightCCF_Imp.py    # [创新] 改进版 LightCCF 模型
+│   │   │   │   ├── LightGCN.py        # 基线模型
+│   │   │   │   └── BPRMF.py           # 基线模型
+│   │   ├── helpers/
+│   │   │   ├── BaseRunner.py          # 训练和评估循环
+│   │   │   └── BaseReader.py          # 数据加载
+│   │   └── main.py                    # 程序入口
+│   └── data/                          # 数据集
+│       ├── Grocery_and_Gourmet_Food/
+│       └── MovieLens_1M/
+├── data/                              # 数据集
+├── ndcg_comparison.png                # 结果可视化
+├── time_comparison.png                # 结果可视化
+├── loss_curve.png                     # 结果可视化
+├── model/                             # 训练得到的模型权重（.gitignore 忽略）
+├── log/                               # 实验日志和保存的结果（.gitignore 忽略，运行后自动生成）
+└── README.md                          # 本文件
 ```
 
 ## 2. 环境要求
