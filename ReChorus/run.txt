@@ -13,3 +13,11 @@ python src/main.py --model_name LightGCN --dataset MovieLens_1M --epoch 20 --emb
 
 python src/main.py --model_name LightCCF_Imp --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --noise_eps 0.02 --learnable_tau 1 --num_workers 0
 python src/main.py --model_name LightCCF_Imp --dataset MovieLens_1M --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --noise_eps 0.02 --learnable_tau 1 --num_workers 0
+
+# 变体 A: 只加噪声 (noise_eps=0.02, learnable_tau=0)
+python src/main.py --model_name LightCCF_Imp --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0 --noise_eps 0.02 --learnable_tau 0 
+python src/main.py --model_name LightCCF_Imp --dataset MovieLens_1M --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0 --noise_eps 0.02 --learnable_tau 0 
+
+# 变体 B: 只可学习温度 (noise_eps=0, learnable_tau=1)
+python src/main.py --model_name LightCCF_Imp --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0 --noise_eps 0 --learnable_tau 1
+python src/main.py --model_name LightCCF_Imp --dataset MovieLens_1M --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0 --noise_eps 0 --learnable_tau 1

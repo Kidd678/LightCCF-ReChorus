@@ -1,4 +1,5 @@
 # Core ML/DL packages (Python 3.12.6)
+python==3.12.6
 torch==2.5.1
 torchaudio==2.5.1
 torchvision==0.20.1
