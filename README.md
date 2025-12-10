@@ -103,6 +103,36 @@ MovieLens-1M 数据集上每个 epoch 的训练时间对比：
 - LightCCF 比 LightGCN **快 7.5 倍**。
 - 通过移除昂贵的图卷积操作，并依赖对比学习进行邻域聚合，LightCCF 实现了更好的性能，同时计算效率与简单矩阵分解相当。
 
+### 4.3 可视化与分析脚本
+
+项目新增了若干可视化文件与脚本，用于绘制模型性能对比图、案例分析图和训练曲线（中文/英文图均有）。这些文件位于 `plot/` 目录，主要包括：
+
+- `plot/case_study_bar.png` — 案例用户的条形排名比较图
+- `plot/case_study_boxplot.png` — 案例用户排名的箱线图（分布比较）
+- `plot/loss_curve_cn.png` — 训练/验证损失曲线
+- `plot/ndcg_comparison_cn.png` — NDCG@K 对比图
+- `plot/time_comparison_cn.png` — 训练时间对比图
+- `plot/稀疏数据集全量测试集Recall@K趋势曲线.png` — Recall@K 趋势图（稀疏数据集）
+- `plot/稀疏数据集全量测试集预测排名分布.png` — 预测排名分布图（稀疏数据集）
+
+可用脚本：
+
+- `visualize_cases.py` — 根据 `case_study.py` 输出生成案例对比图（条形、箱线等）。
+- `visualize_global_performance.py` — 汇总 `log/` 下所有模型的输出，绘制 NDCG、Recall、训练时间等全局比较图。
+- `plot_result.py` — 绘制LightCCF与基线模型的表现对比图
+
+示例用法（在仓库根目录运行）：
+
+```powershell
+# 绘制全局性能比较图（会读取 log/ 下的 rec-*-test.csv）
+python visualize_global_performance.py 
+
+# 为案例用户生成条形与箱线图（需要先运行 case_study.py 生成候选用户）
+python visualize_cases.py 
+```
+
+说明：若脚本报错找不到日志文件，请先运行对应模型以产生日志（`log/{model}/.../rec-{model}-test.csv`）
+
 ## 5. 实现细节
 
 LightCCF 的实现位于 `src/models/general/LightCCF.py` 中。主要特性包括：
