@@ -1,0 +1,32 @@
+﻿# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Environments
+env/
+venv/
+.venv/
+
+# PyTorch / models / outputs
+*.pt
+*.pth
+/model/
+/log/
+
+# Data
+/data/
+/dataset/
+/datasets/
+
+# Jupyter
+.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# Mac/Windows
+.DS_Store
+Thumbs.db
+
+# Git LFS tracked files will be configured separately if needed
