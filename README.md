@@ -20,75 +20,73 @@ ReChorus/
 │   ├── Grocery_and_Gourmet_Food/
 │   └── MovieLens_1M/
 ├── log/                      # 实验日志和保存的结果
-├── ndcg_comparison.png       # 结果可视化
-├── time_comparison.png       # 结果可视化
-└── loss_curve.png            # 结果可视化
+# LightCCF + ReChorus — 复现实验仓库
+
+本仓库将 `LightCCF` 的实现与 `ReChorus` 实验框架放在同一项目中，便于复现实验并与基线模型（BPRMF、LightGCN）比较。仓库包含两部分：`LightCCF/`（轻量复现实现）和 `ReChorus/`（实验框架与数据）。
+
+**快速概览**：
+- 根目录包含 `LightCCF/`、`ReChorus/`、以及用于存放模型/日志的 `model/` 和 `log/`（ `model/` 与 `log/` 需要运行后才会产生）。
+
+## 1. 仓库结构（简要）
+
+```
+./
+├── LightCCF/                # LightCCF 的简洁实现（脚本、工具、数据说明）
+├── ReChorus/                # ReChorus 实验框架（src/, data/, docs/ 等）
+│   ├── src/
+│   │   ├── models/          # 各类模型实现（general/ 包含 LightCCF, LightGCN, BPRMF）
+│   │   └── main.py          # ReChorus 的程序入口（训练/评估）
+│   └── data/                # 示例数据集（请根据需要下载或准备）
+├── model/                   # 训练得到的模型权重（运行后产生）
+├── log/                     # 训练日志与结果（运行后产生）
+├── README.md                # 本文件
+└── requirements.txt         # 依赖（位于 ReChorus/ ）
 ```
 
 ## 2. 环境要求
 
 - Python 3.8+
-- PyTorch
-- Pandas、NumPy、Scikit-learn
+- PyTorch（与 CUDA 版本匹配，可选 GPU）
+- pandas, numpy, scikit-learn, tqdm 等常用库
 
 安装依赖：
-```bash
-pip install -r requirements.txt
+
+```powershell
+`pip install -r ReChorus/requirements.txt`
 ```
 
-## 3. 运行方法
 
-**重要提示**：Windows 用户需要添加 `--num_workers 0` 以避免多进程问题。
+## 3. 运行说明
 
-### 3.1 运行 LightCCF（目标模型）
-```bash
-# Grocery 数据集
-python src/main.py --model_name LightCCF --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0
+说明：`ReChorus/src/main.py` 是实验框架的入口，用于训练与评估多种模型；`LightCCF/` 下也包含用于单独运行或演示的小脚本。
 
-# MovieLens-1M 数据集
-python src/main.py --model_name LightCCF --dataset MovieLens_1M --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0
+**重要（Windows）**：在 Windows 平台上运行 `ReChorus` 时，请添加 `--num_workers 0` 以避免多进程问题。
+
+示例命令（在仓库根目录运行）：
+
+```powershell
+# 运行 ReChorus 中的 LightCCF（Grocery 数据集）
+python ReChorus/src/main.py --model_name LightCCF --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 0 --ssl_lambda 0.1 --tau 0.2 --num_workers 0
+
+# 运行基线：LightGCN
+python ReChorus/src/main.py --model_name LightGCN --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 1e-4 --num_workers 0
+
+# 运行根目录下的 LightCCF 示例（如果需要）
+python LightCCF/main.py --help
 ```
 
-### 3.2 运行基线模型
-```bash
-# BPRMF
-python src/main.py --model_name BPRMF --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 1e-4 --num_workers 0
+根据框架不同，命令行参数名可能略有差异，请查看 `ReChorus/src/main.py` 的参数说明或 `--help` 输出。
 
-# LightGCN
-python src/main.py --model_name LightGCN --dataset Grocery_and_Gourmet_Food --epoch 20 --emb_size 64 --lr 1e-3 --l2 1e-4 --num_workers 0
+
+
+## 4. 实验结果与可视化
+
+- 项目中包含用于绘制对比图表的脚本（例如 `plot_result.py`）。运行这些脚本会读取 `log/` 目录下的实验输出并生成图片（若 `log/` 本地存在）。
+
+示例：
+```powershell
+python plot_result.py
 ```
 
-## 4. 实验结果
+（根据脚本位置调整路径，例如 `python ReChorus/plot_result.py`）
 
-我们在两个数据集上进行了实验：`Grocery_and_Gourmet_Food` 和 `MovieLens-1M`。
-
-### 4.1 性能对比（NDCG@20）
-
-| 模型 | Grocery | MovieLens-1M |
-|-------|---------|--------------|
-| BPRMF | 0.1671  | 0.3191       |
-| LightGCN| 0.1730 | 0.3293       |
-| **LightCCF** | **0.3200** | **0.3685** |
-
-**分析**：
-- **LightCCF** 在两个数据集上都明显优于 BPRMF 和 LightGCN。
-- 在 `Grocery` 数据集上，LightCCF 的性能接近基线模型的 **2 倍**，展示了其在稀疏数据集上的优势。
-- 在 `MovieLens-1M` 上，它的性能始终领先，相比 LightGCN 有约 12% 的提升。
-
-### 4.2 训练效率
-
-MovieLens-1M 数据集上每个 epoch 的训练时间对比：
-- **BPRMF**：~12s
-- **LightCCF**：~20s
-- **LightGCN**：~150s
-
-**分析**：
-- LightCCF 比 LightGCN **快 7.5 倍**。
-- 通过移除昂贵的图卷积操作，并依赖对比学习进行邻域聚合，LightCCF 实现了更好的性能，同时计算效率与简单矩阵分解相当。
-
-## 5. 实现细节
-
-LightCCF 的实现位于 `src/models/general/LightCCF.py` 中。主要特性包括：
-- **无 GCN 层**：纯嵌入向量架构。
-- **邻域聚合（NA）损失**：显式地优化用户与其正样本间的相似度，同时推离其他样本，隐式地实现 GCN 的平滑效果。
-- **超参数**：经实验验证，`ssl_lambda=0.1`（NA 损失权重）和 `tau=0.2`（温度参数）是最优的。
